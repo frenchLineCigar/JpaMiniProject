@@ -8,13 +8,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * Created by frenchline707@gmail.com on 2020-10-13
- * Blog : http://frenchline707.tistory.com
- * Github : http://github.com/frenchLineCigar
+ * 주소 값 타입
  */
 
 @Embeddable //JPA 내장 타입
-@Getter //값 타입은 변경 불가능하게 설계
+@Getter //값 타입은 변경 불가능하게 @Setter없이 설계
 public class Address {
 
     private String city;

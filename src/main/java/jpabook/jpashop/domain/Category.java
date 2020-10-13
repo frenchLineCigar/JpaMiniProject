@@ -17,11 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by frenchline707@gmail.com on 2020-10-13
- * Blog : http://frenchline707.tistory.com
- * Github : http://github.com/frenchLineCigar
+ * 카테고리 엔티티
  */
-
 @Entity
 @Getter @Setter
 public class Category {

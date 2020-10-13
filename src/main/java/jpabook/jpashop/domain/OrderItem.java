@@ -10,14 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
- * Created by frenchline707@gmail.com on 2020-10-13
- * Blog : http://frenchline707.tistory.com
- * Github : http://github.com/frenchLineCigar
+ * 주문상품 엔티티
  */
 
 @Entity
+@Table(name = "order_item")
 @Getter
 @Setter
 public class OrderItem {
@@ -28,11 +28,11 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private Item item;
+    private Item item; //주문 상품
 
     @ManyToOne //다대일, 주문상품은 하나의 주문만 가질 수 있음
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Order order; //주문
 
     private int orderPrice; //주문 가격
     private int count; //주문 수량

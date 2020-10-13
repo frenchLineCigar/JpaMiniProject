@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by frenchline707@gmail.com on 2020-10-13
- * Blog : http://frenchline707.tistory.com
- * Github : http://github.com/frenchLineCigar
+ * 상품 엔티티
  */
 
 @Entity

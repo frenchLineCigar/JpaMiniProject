@@ -13,9 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 /**
- * Created by frenchline707@gmail.com on 2020-10-13
- * Blog : http://frenchline707.tistory.com
- * Github : http://github.com/frenchLineCigar
+ * 배송 엔티티
  */
 
 @Entity
@@ -33,6 +31,6 @@ public class Delivery {
     private Address address;
 
     @Enumerated(EnumType.STRING)
-    private DeliveryStatus status; //배송상태 [READY, COMP]
+    private DeliveryStatus status; //배송 상태 ENUM [READY(준비), COMP(배송)]
 
 }
