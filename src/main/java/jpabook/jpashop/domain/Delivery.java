@@ -1,0 +1,38 @@
+package jpabook.jpashop.domain;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+/**
+ * Created by frenchline707@gmail.com on 2020-10-13
+ * Blog : http://frenchline707.tistory.com
+ * Github : http://github.com/frenchLineCigar
+ */
+
+@Entity
+@Getter @Setter
+public class Delivery {
+
+    @Id @GeneratedValue
+    @Column(name = "delivery_id")
+    private Long id;
+
+    @OneToOne(mappedBy = "delivery") //일대일, 하나의 배송정보도 꼭 하나의 주문정보만 가져야된다
+    private Order order;
+
+    @Embedded //내장타입 사용
+    private Address address;
+
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status; //배송상태 [READY, COMP]
+
+}
