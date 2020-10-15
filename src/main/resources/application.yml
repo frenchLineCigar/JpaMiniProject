@@ -8,7 +8,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop # Create the schema and destroy previous data
+      ddl-auto: create # Create the schema and destroy previous data
     properties:
       hibernate:
 #        show_sql: true #System.out에 하이버네이트 실행 SQL 출력(운영 환경에서는 System.out에 찍으면 안되고)

@@ -1,6 +1,7 @@
 package jpabook.jpashop.domain.item;
 
 import jpabook.jpashop.domain.Category;
+import jpabook.jpashop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,4 +44,22 @@ public abstract class Item { //구현체 3개를 가지고 만들기 때문에 �
 //        category.getItems().add(this);
 //    }
 
+    //==비즈니스 로직==//
+    /**
+     * stock 증가
+     */
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    /**
+     * stock 감소
+     */
+    public void removeStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (restStock < 0) {
+            throw new NotEnoughStockException("need more stock"); //남은 재고 수량이 0보다 작으면 예외 터트림
+        }
+        this.stockQuantity = restStock;
+    }
 }
