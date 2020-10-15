@@ -17,11 +17,6 @@ public class MemberRepository {
 
     private final EntityManager em;
 
-//    @Autowired
-//    public MemberRepository(EntityManager em) { //-> @RequiredArgsConstructor로 대체
-//        this.em = em;
-//    }
-
     /* 회원 저장 */
     public void save(Member member) {
         em.persist(member); //영속성 컨텍스트에 member 객체를 넣고, 트랜잭션이 commit 되는 시점에 DB에 반영(insert)

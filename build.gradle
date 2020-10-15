@@ -32,7 +32,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		//exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+		//exclude group: 'org.junit.vintage', module: 'junit-vintage-engine' //부트 상위버전에서 JUnit4 사용하려면 junit-vintage-engine 제외되지 않도록 주석처리
 	}
 }
 

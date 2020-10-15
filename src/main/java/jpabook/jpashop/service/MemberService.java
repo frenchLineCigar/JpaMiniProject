@@ -21,11 +21,6 @@ public class MemberService { // Navigate -> File Structure via Ctrl + F12 [Intel
 
     private final MemberRepository memberRepository;
 
-//    @Autowired
-//    public MemberService(MemberRepository memberRepository) { //-> @RequiredArgsConstructor로 대체
-//        this.memberRepository = memberRepository;
-//    }
-
     /**
      * 회원 가입
      */
@@ -59,6 +54,11 @@ public class MemberService { // Navigate -> File Structure via Ctrl + F12 [Intel
         return memberRepository.findOne(memberId);
     }
 
-
+    /**
+     * 특정 이름의 회원 조회
+     */
+    public List<Member> findByName(String memberName) {
+        return memberRepository.findByName(memberName);
+    }
 
 }
