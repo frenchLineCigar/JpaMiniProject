@@ -1,12 +1,10 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Member;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
 import java.util.List;
 
 /**
@@ -14,14 +12,15 @@ import java.util.List;
  */
 
 @Repository
+@RequiredArgsConstructor
 public class MemberRepository {
 
-    @PersistenceContext //스프링이 JPA EntityManager를 생성하고 자동으로 주입
-    private EntityManager em;
+    private final EntityManager em;
 
-//    혹시 만약에 내가 직접 EntityManagerFactory를 주입 받고 싶다면? (거의 쓸 일은 없다)
-//    @PersistenceUnit
-//    private EntityManagerFactory emf;
+//    @Autowired
+//    public MemberRepository(EntityManager em) { //-> @RequiredArgsConstructor로 대체
+//        this.em = em;
+//    }
 
     /* 회원 저장 */
     public void save(Member member) {

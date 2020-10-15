@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * 회원 엔티티
  */
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(name = "name_unique", columnNames = "name")})
 @Getter @Setter
 public class Member {
 
