@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,4 +36,11 @@ public abstract class Item { //구현체 3개를 가지고 만들기 때문에 �
 
     @ManyToMany(mappedBy = "items") //아이템도 List로 카테고리를 갖는다
     private List<Category> categories = new ArrayList<>();
+
+//    실험
+//    public void addCategory(Category category) {
+//        this.categories.add(category);
+//        category.getItems().add(this);
+//    }
+
 }

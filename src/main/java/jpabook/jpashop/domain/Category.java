@@ -43,12 +43,24 @@ public class Category {
      */
 
     //카테고리 계층 구조 : 부모(상위 카테고리), 자식(하위 카테고리)
-    //같은 엔티티 타입에 대해서 셀프로 양방향 연관관계 걸 수 있음
+    //같은 엔티티 타입에 대해서 `셀프로 양방향 연관관계` 걸 수 있음
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent; //부모 타입도 내 타입과 같고 하나만 가질 수 있다
 
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<>(); //내 자식은 여러 개를 가질 수 있다
+
+    //==연관관계 메서드==/
+    public void addChildCategory(Category child) {
+        this.child.add(child); //부모에 자식을 짚어넣고
+        child.setParent(this); //자식에도 부모가 누군지를 바로 볼수있게 짚어넣고
+    }
+
+//    실험
+//    public void addItem(Item item) {
+//        this.items.add(item);
+//        item.getCategories().add(this);
+//    }
 
 }
