@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import static javax.persistence.FetchType.LAZY;
+
 /**
  * 배송 엔티티
  */
@@ -24,7 +26,7 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
-    @OneToOne(mappedBy = "delivery") //일대일, 하나의 배송정보도 꼭 하나의 주문정보만 가져야된다
+    @OneToOne(mappedBy = "delivery", fetch = LAZY) //일대일, 하나의 배송정보도 꼭 하나의 주문정보만 가져야된다
     private Order order;
 
     @Embedded //내장타입 사용

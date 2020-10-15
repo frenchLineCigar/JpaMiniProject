@@ -5,9 +5,12 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+
   jpa:
     hibernate:
-      ddl-auto: create #애플리케이션 실행 시점에 테이블을 drop 하고, 다시 생성
+      naming:
+        physical-strategy: jpabook.jpashop.CustomSpringPhysicalNamingStrategy #테이블, 컬럼명 생성 전략을 회사 룰로 변경 가능
+      ddl-auto: create-drop # Create the schema and destroy previous data
     properties:
       hibernate:
 #        show_sql: true #System.out에 하이버네이트 실행 SQL 출력(운영 환경에서는 System.out에 찍으면 안되고)

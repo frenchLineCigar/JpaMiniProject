@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 /**
  * 카테고리 엔티티
  */
@@ -42,7 +44,7 @@ public class Category {
 
     //카테고리 계층 구조 : 부모(상위 카테고리), 자식(하위 카테고리)
     //같은 엔티티 타입에 대해서 셀프로 양방향 연관관계 걸 수 있음
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent; //부모 타입도 내 타입과 같고 하나만 가질 수 있다
 

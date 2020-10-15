@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static javax.persistence.FetchType.LAZY;
+
 /**
  * 주문상품 엔티티
  */
@@ -26,11 +28,11 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "item_id")
     private Item item; //주문 상품
 
-    @ManyToOne //다대일, 주문상품은 하나의 주문만 가질 수 있음
+    @ManyToOne(fetch = LAZY) //다대일, 주문상품은 하나의 주문만 가질 수 있음
     @JoinColumn(name = "order_id")
     private Order order; //주문
 
