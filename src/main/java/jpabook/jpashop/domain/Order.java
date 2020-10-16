@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -29,6 +31,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name = "orders")
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //생성자 사용을 금지하도록 제약. 생성 메서드 이외의 다른 방식의 엔티티 생성을 막음
 public class Order {
 
     @Id @GeneratedValue
@@ -39,10 +42,10 @@ public class Order {
     @JoinColumn(name = "member_id") //매핑을 뭘로 할 것인지, FK : member_id
     private Member member; //주문 회원
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //일대다, 하나의 주문이 여러개의 주문상품을 가질 수 있음
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //CascadeType.ALL : Order를 persist()하면 여기에 컬렉션으로 들어와있는 OrderItem 엔티티도 다 persist()를 강제
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) //일대일, 하나의 주문은 꼭 하나의 배송정보만 가져야 된다
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) //CascadeType.ALL : 마찬가지로 Order가 persist()될 때 Delievery 엔티티도 persist()
     @JoinColumn(name = "delivery_id")
     private Delivery delivery; //배송정보
 
@@ -82,9 +85,10 @@ public class Order {
     }
 
     //==비즈니스 로직==//
-
     /**
-     * 주문 취소: 주문 취소시 사용한다. 주문 상태를 취소로 변경하고 주문상품에 주문 취소를 알린다. 주문 취소 수량만큼 해당 상품의 재고를 다시 늘려야 하고, 만약 이미 배송을 완료한 상품이면 주문을 취소하지 못하도록 예외를 발생시킨다.
+     * 주문 취소: 주문 취소시 사용한다. 주문 상태를 취소로 변경하고 주문상품에 주문 취소를 알린다.
+     *          주문 취소 수량만큼 해당 상품의 재고를 다시 늘려야 하고,
+     *          만약 이미 배송을 완료한 상품이면 주문을 취소하지 못하도록 예외를 발생시킨다.
      */
     public void cancel() {
         //validation logic
@@ -101,7 +105,6 @@ public class Order {
     }
 
     //==조회 로직==//
-
     /**
      * 전체 주문 가격 조회: 연관된 주문상품들의 가격을 조회해서 더한 값을 반환한다
      */
