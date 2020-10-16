@@ -46,14 +46,14 @@ public abstract class Item { //구현체 3개를 가지고 만들기 때문에 �
 
     //==비즈니스 로직==//
     /**
-     * stock 증가
+     * stock 증가 -> 주문 취소 시
      */
     public void addStock(int quantity) {
         this.stockQuantity += quantity;
     }
 
     /**
-     * stock 감소
+     * stock 감소 -> 주문 시
      */
     public void removeStock(int quantity) {
         int restStock = this.stockQuantity - quantity;

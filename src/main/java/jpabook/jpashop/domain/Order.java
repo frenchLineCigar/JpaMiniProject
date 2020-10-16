@@ -108,7 +108,7 @@ public class Order {
     /**
      * 전체 주문 가격 조회: 연관된 주문상품들의 가격을 조회해서 더한 값을 반환한다
      */
-    private int getTotalPrice() {
+    public int getTotalPrice() {
         int totalPrice = 0;
         for (OrderItem orderItem : orderItems) {
             totalPrice += orderItem.getTotalPrice();
