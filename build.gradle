@@ -8,16 +8,16 @@ plugins {
 
 group = 'jpabook'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
 
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 dependencies {
@@ -27,6 +27,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-devtools'
 
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6' //쿼리 파라미터를 로그로 남기는 외부 라이브러리 p6spy
+
+	implementation 'com.querydsl:querydsl-jpa'
+	implementation 'com.querydsl:querydsl-apt'
+
+	annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa") // Using QueryDSL JPAAnnotationProcessor
+	annotationProcessor("javax.persistence:javax.persistence-api") // Java 9 or later : java.lang.NoClassDefFoundError (javax.annotation.Entity)
+	annotationProcessor("javax.annotation:javax.annotation-api") // Java 9 or later : java.lang.NoClassDefFoundError (javax.annotation.Generated)
 
 	runtimeOnly 'com.h2database:h2'
 	compileOnly 'org.projectlombok:lombok'
@@ -39,3 +46,26 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+/* QueryDSL 설정 추가 */
+def generationPath = file("src/main/generated/")
+
+// 어노테이션 프로세서에 의해 자동 생성된 소스코드가 저장될 경로 지정
+compileJava {
+	options.annotationProcessorGeneratedSourcesDirectory = generationPath
+}
+
+// clean Task 실행시에 자동 생성된 소스코드를 모두 삭제한다
+clean.doLast {
+	generationPath.deleteDir()
+}
+
+// 자동 생성된 소스코드의 경로도 소스셋에 포함한다
+sourceSets {
+	main {
+		java {
+			srcDirs += generationPath
+		}
+	}
+}
+/* QueryDSL 설정 끝 */

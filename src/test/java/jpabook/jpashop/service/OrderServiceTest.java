@@ -8,6 +8,7 @@ import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.exception.NotEnoughStockException;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderSearch;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -94,6 +96,25 @@ public class OrderServiceTest {
         assertEquals("주문 취소시 상태는 CANCEL 이다.", OrderStatus.CANCEL, getOrder.getStatus());
         assertEquals("주문이 취소된 상품은 그만큼 재고가 증가해야 한다.", 10, item.getStockQuantity());
     }
+
+    @Test
+    public void 주문검색() throws Exception {
+        //given
+        Member member = createMember();
+        Book item = createBook("시골 JPA", 10000, 10);
+        int orderCount = 2;
+        Long orderId = orderService.order(member.getId(), item.getId(), orderCount);
+
+        OrderSearch orderSearch = new OrderSearch();
+
+        //when
+        List<Order> orders = orderService.findOrders(orderSearch);
+
+        //then
+        List<Order> result = orderRepository.findAll(orderSearch);
+        assertEquals("현재 주문은 1개", 1, result.size());
+    }
+
 
     private Book createBook(String name, int price, int stockQuantity) {
         Book book = new Book();
