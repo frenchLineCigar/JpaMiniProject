@@ -1,7 +1,11 @@
+
+/* QueryDSL 설정 : Gradle Plugin "com.ewerk.gradle.plugins.querydsl" 을 사용하던 방식 */
+
 plugins {
 	id 'org.springframework.boot' version '2.3.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" //querydsl 추가
 }
 
 //ext["hibernate.version"] = "5.4.20.Final" //하이버네이트 버전 지정
@@ -31,10 +35,6 @@ dependencies {
 	implementation 'com.querydsl:querydsl-jpa'
 	implementation 'com.querydsl:querydsl-apt'
 
-	annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa") // Using QueryDSL JPAAnnotationProcessor
-	annotationProcessor("javax.persistence:javax.persistence-api") // Java 9 or later : java.lang.NoClassDefFoundError (javax.annotation.Entity)
-	annotationProcessor("javax.annotation:javax.annotation-api") // Java 9 or later : java.lang.NoClassDefFoundError (javax.annotation.Generated)
-
 	runtimeOnly 'com.h2database:h2'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -47,25 +47,27 @@ test {
 	useJUnitPlatform()
 }
 
-/* QueryDSL 설정 추가 */
-def generationPath = file("src/main/generated/")
+//querydsl 추가
+def querydslDir = 'src/main/generated'
 
-// 어노테이션 프로세서에 의해 자동 생성된 소스코드가 저장될 경로 지정
-compileJava {
-	options.annotationProcessorGeneratedSourcesDirectory = generationPath
+querydsl {
+	library = "com.querydsl:querydsl-apt"
+	jpa = true
+	querydslSourcesDir = querydslDir
 }
 
-// clean Task 실행시에 자동 생성된 소스코드를 모두 삭제한다
-clean.doLast {
-	generationPath.deleteDir()
-}
-
-// 자동 생성된 소스코드의 경로도 소스셋에 포함한다
 sourceSets {
 	main {
 		java {
-			srcDirs += generationPath
+			srcDirs = ['src/main/java', querydslDir]
 		}
 	}
 }
-/* QueryDSL 설정 끝 */
+
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+	querydsl.extendsFrom compileClasspath
+}

@@ -5,6 +5,10 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+# 스프링 부트 타임리프 기본 설정
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
   jpa:
     hibernate:
