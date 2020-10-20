@@ -67,6 +67,7 @@ public class MemberController {
             members.forEach(member -> {
                 MemberDto m = new MemberDto();
                 m.setId(member.getId());
+                m.setName(member.getName());
                 m.setCity(member.getAddress().getCity());
                 m.setStreet(member.getAddress().getStreet());
                 m.setZipcode(member.getAddress().getZipcode());
