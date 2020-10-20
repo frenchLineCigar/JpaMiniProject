@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 회원 컨트롤러
@@ -45,4 +47,35 @@ public class MemberController {
         memberService.join(member);
         return "redirect:/"; //홈으로 리다이렉트
     }
+
+    @GetMapping()
+    public String list(Model model) {
+//        List<Member> members = memberService.findMembers();
+//        model.addAttribute("members", members);
+
+        List<Member> members = memberService.findMembers();
+        List<MemberDto> mList = DtoUtils.convertDto(members);
+
+        model.addAttribute("mList", mList);
+        return "members/memberList";
+    }
+
+    static class DtoUtils {
+        //convert MemberEntity into MemberDto
+        private static List<MemberDto> convertDto(List<Member> members) {
+            List<MemberDto> mList = new ArrayList<>();
+            members.forEach(member -> {
+                MemberDto m = new MemberDto();
+                m.setId(member.getId());
+                m.setCity(member.getAddress().getCity());
+                m.setStreet(member.getAddress().getStreet());
+                m.setZipcode(member.getAddress().getZipcode());
+                mList.add(m);
+            });
+            return mList;
+        }
+
+    }
+
 }
+
