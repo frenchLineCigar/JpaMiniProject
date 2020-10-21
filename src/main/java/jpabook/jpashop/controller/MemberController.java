@@ -50,13 +50,14 @@ public class MemberController {
 
     @GetMapping()
     public String list(Model model) {
+//        기존 코드
 //        List<Member> members = memberService.findMembers();
 //        model.addAttribute("members", members);
 
         List<Member> members = memberService.findMembers();
         List<MemberDto> mList = DtoUtils.convertDto(members);
-
         model.addAttribute("mList", mList);
+
         return "members/memberList";
     }
 

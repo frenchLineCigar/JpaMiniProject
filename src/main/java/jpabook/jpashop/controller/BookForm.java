@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 /**
@@ -16,10 +17,12 @@ public class BookForm {
 
     @NotEmpty(message = "상품 이름은 필수 입니다")
     private String name;
-//    @NotEmpty(message = "상품 가격은 필수 입니다")
+
+    @NotNull
     @PositiveOrZero(message = "상품 가격은 0 또는 양수")
     private int price;
-//    @NotEmpty(message = "상품 수량은 필수 입니다")
+
+    @NotNull
     @PositiveOrZero(message = "상품 수량은 0 또는 양수")
     private int stockQuantity;
 
