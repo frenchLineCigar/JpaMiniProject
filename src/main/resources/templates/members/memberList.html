@@ -17,22 +17,22 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="m : ${mList}">
+            <tr th:each="m : ${memberList}">
                 <td th:text="${m?.id}"></td>
                 <td th:text="${m?.name}"></td>
                 <td th:text="${m?.city}"></td>
                 <td th:text="${m?.street}"></td>
                 <td th:text="${m?.zipcode}"></td>
             </tr>
-<!--
-            <tr th:each="member : ${members}">
-                <td th:text="${member.id}"></td>
-                <td th:text="${member.name}"></td>
-                <td th:text="${member.address?.city}"></td>
-                <td th:text="${member.address?.street}"></td>
-                <td th:text="${member.address?.zipcode}"></td>
-            </tr>
--->
+            <!--
+                        <tr th:each="member : ${members}">
+                            <td th:text="${member.id}"></td>
+                            <td th:text="${member.name}"></td>
+                            <td th:text="${member.address?.city}"></td>
+                            <td th:text="${member.address?.street}"></td>
+                            <td th:text="${member.address?.zipcode}"></td>
+                        </tr>
+            -->
             </tbody>
         </table>
     </div>

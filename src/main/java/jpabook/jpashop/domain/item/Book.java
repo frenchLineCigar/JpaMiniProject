@@ -22,7 +22,7 @@ public class Book extends Item {
     protected Book() {
     }
 
-    public static Book createBook(BookForm form) {
+    public static Book convertBookEntity(BookForm form) {
         Book book = new Book();
         book.setName(form.getName());
         book.setPrice(form.getPrice());

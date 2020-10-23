@@ -38,19 +38,15 @@ public class ItemController {
             return "items/createItemForm";
         }
 
-        Book book = Book.createBook(form);
-//        기존 코드
-//        Book book = new Book();
-//        book.setName(form.getName());
-//        book.setPrice(form.getPrice());
-//        book.setStockQuantity(form.getStockQuantity());
-//        book.setAuthor(form.getAuthor());
-//        book.setIsbn(form.getIsbn());
+        Book book = Book.convertBookEntity(form);
 
         itemService.saveItem(book);
         return "redirect:/items";
     }
 
+    /**
+     * 상품 목록
+     */
     @GetMapping()
     public String list(Model model) {
         List<Item> items = itemService.findItems();

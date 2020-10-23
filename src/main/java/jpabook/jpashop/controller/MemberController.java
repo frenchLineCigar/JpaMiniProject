@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ public class MemberController {
 
     @GetMapping(value = "/new")
     public String createForm(Model model) {
-        model.addAttribute("memberForm", new MemberForm()); //컨트롤러에서 뷰로 넘어갈때 이 모델 데이터를 싣어서 넘김
+        model.addAttribute("memberForm", new MemberForm());
         return "members/createMemberForm";
     }
 
@@ -45,38 +44,20 @@ public class MemberController {
         member.setAddress(address);
 
         memberService.join(member);
-        return "redirect:/"; //홈으로 리다이렉트
+        return "redirect:/";
     }
 
     @GetMapping()
     public String list(Model model) {
+
+//      변경 : Entity -> DTO 로 가공 후 전달
+        List<Member> members = memberService.findMembers();
+        List<MemberForm> memberList = MemberForm.convertMemberList(members);
+        model.addAttribute("memberList", memberList);
 //        기존 코드
-//        List<Member> members = memberService.findMembers();
 //        model.addAttribute("members", members);
 
-        List<Member> members = memberService.findMembers();
-        List<MemberDto> mList = DtoUtils.convertDto(members);
-        model.addAttribute("mList", mList);
-
         return "members/memberList";
-    }
-
-    static class DtoUtils {
-        //convert MemberEntity into MemberDto
-        private static List<MemberDto> convertDto(List<Member> members) {
-            List<MemberDto> mList = new ArrayList<>();
-            members.forEach(member -> {
-                MemberDto m = new MemberDto();
-                m.setId(member.getId());
-                m.setName(member.getName());
-                m.setCity(member.getAddress().getCity());
-                m.setStreet(member.getAddress().getStreet());
-                m.setZipcode(member.getAddress().getZipcode());
-                mList.add(m);
-            });
-            return mList;
-        }
-
     }
 
 }
