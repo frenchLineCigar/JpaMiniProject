@@ -21,10 +21,10 @@ public class ItemRepository {
      * 상품 등록
      */
     public void save(Item item) {
-        if (item.getId() == null) { //아이디가 없으면 새걸로 보고 persist() 호출
+        if (item.getId() == null) { //아이디가 없으면 새로운 객체로 보고 persist() 호출
             em.persist(item); //신규 등록 - Make an instance managed and persistent.
         } else { //아이디가 있으면 merge() 호출
-            em.merge(item); //Merge the state of the given entity into the current persistence context.
+            em.merge(item); //수정 병합 - Merge the state of the given entity into the current persistence context.
         }
     }
 

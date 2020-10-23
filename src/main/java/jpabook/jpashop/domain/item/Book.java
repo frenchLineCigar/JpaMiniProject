@@ -22,8 +22,9 @@ public class Book extends Item {
     protected Book() {
     }
 
-    public static Book convertBookEntity(BookForm form) {
+    public static Book createFromBookForm(BookForm form) {
         Book book = new Book();
+        book.setId((form.getId())); //수정 시 기존값, 추가 시 null값
         book.setName(form.getName());
         book.setPrice(form.getPrice());
         book.setStockQuantity(form.getStockQuantity());
