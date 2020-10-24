@@ -58,6 +58,14 @@ public abstract class Item { //구현체 3개를 가지고 만들기 때문에 �
         this.stockQuantity = restStock;
     }
 
+    /**
+     * 상품 수정
+     */
+    public void change(String name, int price, int stockQuantity) {
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+    }
 
 
 //    실험

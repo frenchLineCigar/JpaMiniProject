@@ -1,9 +1,7 @@
 package jpabook.jpashop.service;
 
-import jpabook.jpashop.domain.Category;
 import jpabook.jpashop.domain.item.Album;
 import jpabook.jpashop.domain.item.Book;
-import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.domain.item.Movie;
 import jpabook.jpashop.repository.ItemRepository;
 import org.assertj.core.api.Assertions;
@@ -16,9 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  * 상품 기능 테스트
@@ -77,7 +74,7 @@ public class ItemServiceTest {
         book1.setName("피노키오");
         book1.setPrice(20000);
         book1.addStock(10);
-        
+
         Book book2 = new Book();
         book2.setAuthor("authorA");
         book2.setIsbn("isbnA");

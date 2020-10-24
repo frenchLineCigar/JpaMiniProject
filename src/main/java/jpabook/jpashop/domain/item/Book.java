@@ -1,7 +1,8 @@
 package jpabook.jpashop.domain.item;
 
-import jpabook.jpashop.controller.BookForm;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
@@ -14,24 +15,21 @@ import javax.persistence.Entity;
 @DiscriminatorValue("B") //값을 명시하지 않으면 클래스명이 기본값
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends Item {
 
     private String author;
     private String isbn;
 
-    protected Book() {
-    }
-
-    public static Book createFromBookForm(BookForm form) {
+    public static Book createBook(String name, int price, int stockQuantity, String author, String isbn) {
         Book book = new Book();
-        book.setId((form.getId())); //수정 시 기존값, 추가 시 null값
-        book.setName(form.getName());
-        book.setPrice(form.getPrice());
-        book.setStockQuantity(form.getStockQuantity());
-        book.setAuthor(form.getAuthor());
-        book.setIsbn(form.getIsbn());
+        book.setName(name);
+        book.setPrice(price);
+        book.setStockQuantity(stockQuantity);
+        book.setAuthor(author);
+        book.setIsbn(isbn);
+
         return book;
     }
-
-
+    
 }

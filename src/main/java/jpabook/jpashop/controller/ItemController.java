@@ -39,7 +39,7 @@ public class ItemController {
             return "items/createItemForm";
         }
 
-        Book book = Book.createFromBookForm(form);
+        Book book = Book.createBook(form.getName(), form.getPrice(), form.getStockQuantity(), form.getAuthor(), form.getIsbn());
 
         itemService.saveItem(book);
         return "redirect:/items";
@@ -55,7 +55,6 @@ public class ItemController {
         return "items/itemList";
     }
 
-
     /**
      * 상품 수정 폼
      */
@@ -63,27 +62,30 @@ public class ItemController {
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {
         //DB 조회
         Book item = (Book) itemService.findOne(itemId);
-        //조회 결과를 DTO로 변환 후 모델에 추가
-        BookForm form = BookForm. convertBookForm(item);
+        //조회 결과를 DTO로 매핑 후 모델에 추가
+        BookForm form = BookForm.mapping(item);
         model.addAttribute("form", form);
 
         return "items/updateItemForm";
     }
 
-
     /**
      * 상품 수정
      */
     @PostMapping("/{itemId}/edit")
-    public String updateItem(@PathVariable String itemId, @ModelAttribute("form") @Valid BookForm form, BindingResult result) {
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") @Valid BookForm form, BindingResult result) {
 
         if (result.hasErrors()) {
             return "items/updateItemForm";
         }
 
-        Book book = Book.createFromBookForm(form);
+        /* 병합(merge) */
+        //Book book = Book.createBook(form.getName(), form.getPrice(), form.getStockQuantity(), form.getAuthor(), form.getIsbn());
+        //itemService.saveItem(book);
 
-        itemService.saveItem(book);
+        /* 변경 감지(dirty checking) */
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+
         return "redirect:/items";
     }
     /**

@@ -31,7 +31,7 @@ public class BookForm {
     private String isbn; //ISBN
 
     /* ENTITY to DTO */
-    public static BookForm convertBookForm(Book book) {
+    public static BookForm mapping(Book book) {
         // getter,setter치기 귀찮음 -> ModelMapper 라이브러리나 인텔리J의 멀티 라인 셀렉트 플러그인 등을 찾아보고 활용해보자
         BookForm form = new BookForm();
         form.setId(book.getId());
