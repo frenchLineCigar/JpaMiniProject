@@ -57,7 +57,6 @@ public class OrderRepository {
                 .from(order)
                 .join(order.member, member)
                 .where(
-                        idEq(orderSearch.getId()),
                         statusEq(orderSearch.getOrderStatus()),
                         nameLike(orderSearch.getMemberName())
                 ) // Skips null arguments
