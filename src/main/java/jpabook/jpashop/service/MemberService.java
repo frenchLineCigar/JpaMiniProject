@@ -61,4 +61,12 @@ public class MemberService { // Navigate -> File Structure via Ctrl + F12 [Intel
         return memberRepository.findByName(memberName);
     }
 
+    /**
+     * 회원 수정
+     */
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id); //변경 감지(dirty checking)를 사용해서 데이터를 수정
+        member.setName(name);
+    }
 }
