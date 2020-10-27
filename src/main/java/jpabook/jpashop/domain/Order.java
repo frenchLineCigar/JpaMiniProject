@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 /**
@@ -38,7 +37,7 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne(fetch = EAGER) //다대일, 하나의 주문에는 한명의 주문 회원만 존재할 수 있음
+    @ManyToOne(fetch = LAZY) //이게 왜 EAGER로 돼있냥
     @JoinColumn(name = "member_id") //매핑을 뭘로 할 것인지, FK : member_id
     private Member member; //주문 회원
 

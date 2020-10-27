@@ -29,11 +29,10 @@ public class Member {
 
     private String name;
 
-    @JsonIgnore
     @Embedded
     private Address address;
 
-    //@JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "member") //일대다, 하나의 회원이 여러 개의 상품을 주문할 수 있음, 읽기 전용(Read-only) 필드
     private List<Order> orders = new ArrayList<>(); //컬렉션은 필드에서 바로 초기화하는 것이 안전 : null 문제 & 하이버네이트는 엔티티를 영속화 할 때, 컬랙션을 감싸서 하이버네이트가 제공하는 내장 컬렉션으로 변경
 
