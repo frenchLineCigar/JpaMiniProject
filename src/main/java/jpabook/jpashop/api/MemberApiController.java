@@ -5,6 +5,7 @@ import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 회원 API
@@ -24,12 +27,58 @@ public class MemberApiController {
     private final MemberService memberService;
 
     /**
-     * 등록 V1: 요청 값으로 Member 엔티티를 직접 받는다.
+     * 조회 V1: 응답 값으로 엔티티를 직접 외부에 노출한 케이스
+     * 문제점
+     * - 엔티티에 프레젠테이션 계층을 위한 로직이 추가된다.
+     * - 기본적으로 엔티티의 모든 값이 노출된다.
+     * - 응답 스펙을 맞추기 위해 엔티티에 로직이 추가된다. (@JsonIgnore, 별도의 뷰 로직 등등)
+     * - 실무에서는 같은 엔티티에 대해 API가 용도에 따라 다양하게 만들어지는데, 한 엔티티에 각각의 API를 위한 프레젠테이션 응답 로직을 담기는 어렵다.
+     * - 엔티티가 변경되면 API 스펙이 변한다.
+     * - 추가로 컬렉션을 직접 반환하면 항후 API 스펙을 변경하기 어렵다.(별도의 Result 클래스 생성으로 해결)
+     * 결론
+     * - API 응답 스펙에 맞추어 별도의 DTO를 반환한다.
+     */
+    //조회 V1: 안 좋은 버전, 모든 엔티티가 노출, @JsonIgnore -> 이건 정말 최악, api가 이거 하나인가! 화면에 종속적이지 마라!
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        return memberService.findMembers();
+    }
+
+    /**
+     * 조회 V2: 응답 값으로 엔티티가 아닌 별도의 DTO를 반환한다.
+     */
+    @GetMapping("/api/v2/members")
+    public Result memberV2() {
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect.size(), collect);
+    }
+
+    //컬렉션을 그대로 반환하면 Json 배열 타입 []으로 나가버리기 때문에 유연성이 확 떨어진다. 따라서 아래처럼 추가로 Result 클래스로 컬렉션을 감싸면 향후 요구사항에 따라 필요한 필드를 추가할 수 있다
+    @Data
+    @AllArgsConstructor
+    static class Result<T> { //응답용 래퍼 객체 껍데기 클래스
+        private int count;
+        private T data;
+    }
+
+    //별도의 DTO에 API 스펙에서 필요한 항목만 노출한다. API 스펙이 DTO와 1:1 대응이 된다
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
+
+
+    /**
+     * 등록 V1: 요청 값으로 Member 엔티티를 직접 받는 케이스
      * 문제점
      * - 엔티티에 프레젠테이션 계층을 위한 로직이 추가됨
      * - 엔티티에 API 검증을 위한 로직이 들어감 (@NotEmpty 등등)
-     * - 실무에서는 회원 엔티티를 위한 다양한 API들이 만들어지는데, 한 엔티티에 각각의 API를 위
-     한 모든 요청 요구사항을 담기는 어려움
+     * - 실무에서는 회원 엔티티를 위한 다양한 API들이 만들어지는데, 한 엔티티에 각각의 API를 위한 모든 요청 요구사항을 담기는 어려움
      * - 엔티티가 변경되면 API 스펙이 변함
      * 결론
      * - API 요청 스펙에 맞추어 별도의 DTO를 파라미터로 받는다.
@@ -84,7 +133,7 @@ public class MemberApiController {
 
     @Data
     static class CreateMemberRequest {
-        @NotEmpty(message = "반드시 값이 존재하고 길이 혹은 크기가 0보다 커야 합니다.")
+        @NotEmpty
         private String name;
     }
 
