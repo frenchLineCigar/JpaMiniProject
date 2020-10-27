@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 회원 데이터 전송 객체
@@ -25,19 +23,20 @@ public class MemberForm {
     private String street;
     private String zipcode;
 
-    /* ENTITY to DTO */
-    public static List<MemberForm> convertMemberList(List<Member> members) {
-        List<MemberForm> memberList = new ArrayList<>();
-        members.forEach(member -> {
-            MemberForm m = new MemberForm();
-            m.setId(member.getId());
-            m.setName(member.getName());
-            m.setCity(member.getAddress().getCity());
-            m.setStreet(member.getAddress().getStreet());
-            m.setZipcode(member.getAddress().getZipcode());
-            memberList.add(m);
-        });
-        return memberList;
+    /**
+     * Create dto instance from entity instance
+     * @param entity
+     * @return created dto instance
+     */
+    public static MemberForm valueOf(Member entity) {
+            MemberForm dto = new MemberForm();
+            dto.setId(entity.getId());
+            dto.setName(entity.getName());
+            dto.setCity(entity.getAddress().getCity());
+            dto.setStreet(entity.getAddress().getStreet());
+            dto.setZipcode(entity.getAddress().getZipcode());
+        return dto;
     }
+
 
 }

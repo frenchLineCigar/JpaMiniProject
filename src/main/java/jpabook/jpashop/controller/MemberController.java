@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 회원 컨트롤러
@@ -49,13 +50,16 @@ public class MemberController {
 
     @GetMapping()
     public String list(Model model) {
-
-//      변경 : Entity -> DTO 로 가공 후 전달
-        List<Member> members = memberService.findMembers();
-        List<MemberForm> memberList = MemberForm.convertMemberList(members);
-        model.addAttribute("memberList", memberList);
-//        기존 코드
+//        List<Member> members = memberService.findMembers();
 //        model.addAttribute("members", members);
+
+        List<Member> entities = memberService.findMembers();
+
+        List<MemberForm> dtoList = entities.stream()
+                .map(MemberForm::valueOf)
+                .collect(Collectors.toList());
+
+        model.addAttribute("memberList", dtoList);
 
         return "members/memberList";
     }
