@@ -6,6 +6,7 @@ import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.item.Book;
+import jpabook.jpashop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,8 @@ public class InitDb {
     static class InitService {
 
         private final EntityManager em;
+        private final MemberRepository memberRepository;
+
         public void dbInit1() {
             Member member = createMember("userA", "서울", "노들길", "1111");
             em.persist(member);
@@ -61,8 +64,9 @@ public class InitDb {
         }
 
         public void dbInit2() {
-            Member member = createMember("userB", "진주", "바닷길", "2222");
-            em.persist(member);
+//            Member member = createMember("userB", "진주", "바닷길", "2222");
+//            em.persist(member);
+            Member member = memberRepository.findByName("userA").get(0);
 
             Book book1 = createBook("SPRING BOOK1", 20000, 200);
             em.persist(book1);

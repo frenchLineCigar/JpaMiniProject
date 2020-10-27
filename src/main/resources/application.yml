@@ -21,4 +21,4 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug #Logger를 통해서 하이버네이트 실행 SQL 출력(모든 로그 출력은 가급적 로거를 통해 남겨야 한다.)
-    org.hibernate.type: trace #SQL 실행 파라미터를 로그로 출력
+#    org.hibernate.type: trace #SQL 실행 파라미터를 로그로 출력

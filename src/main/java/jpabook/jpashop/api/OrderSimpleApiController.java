@@ -1,13 +1,19 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 주문 + 배송정보 + 회원을 조회하는 API
@@ -19,7 +25,7 @@ import java.util.List;
  * Order
  * Order -> Member : ManyToOne
  * Order -> Delivery : OneToOne
- * 
+ * <p>
  * 양방향 연관 관계 문제 해결
  * 프록시 객체 문제
  */
@@ -34,7 +40,7 @@ public class OrderSimpleApiController {
      * V1. 엔티티 직접 노출
      * - Hibernate5Module 모듈 등록, LAZY=null 처리
      * - 양방향 관계 문제 발생 -> @JsonIgnore
-    */
+     */
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAll(new OrderSearch());
@@ -44,4 +50,46 @@ public class OrderSimpleApiController {
         }
         return all;
     }
+
+    /**
+     * V2. 엔티티를 조회해서 DTO로 변환(fetch join 사용X)
+     * - 단점: 지연로딩(lazy loading)으로 인한 쿼리 N번 호출
+     */
+    @GetMapping("/api/v2/simple-orders")
+    public Result ordersV2() {
+        //ORDER 2개 (N = 2)
+        //N + 1 문제 -> 1 + 회원 N + 배송 N
+        List<Order> orders = orderRepository.findAll(new OrderSearch());
+
+        List<SimpleOrderDto> result = orders.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+
+        return new Result(result);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
+    }
+
+    @Data
+    static class SimpleOrderDto {
+        private Long orderId;
+        private String name; //주문자명
+        private LocalDateTime orderDate; //주문시간
+        private OrderStatus orderStatus; //주문상태
+        private Address address; //배송지 (고객주소가 x)
+
+        public SimpleOrderDto(Order order) { //dto가 entity를 파라미터로 받는 건 크게 문제가 되지 않음. 별로 중요하지 않은 곳에서 중요한 것을 의존하는 것이기 때문에
+            orderId = order.getId();
+            name = order.getMember().getName(); //LAZY 초기화
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress(); //LAZY 초기화
+        }
+    }
+
+
 }
