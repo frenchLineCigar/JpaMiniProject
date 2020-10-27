@@ -1,8 +1,6 @@
 package jpabook.jpashop.domain.item;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
@@ -15,7 +13,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue("B") //값을 명시하지 않으면 클래스명이 기본값
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends Item {
 
     private String author;
@@ -31,5 +29,5 @@ public class Book extends Item {
 
         return book;
     }
-    
+
 }

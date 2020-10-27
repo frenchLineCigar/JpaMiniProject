@@ -1,6 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<style>
+    .order-list thead th,
+    .order-list tbody td {
+        vertical-align: middle !important;
+    }
+</style>
 <body>
 
 <div class="container">
@@ -10,7 +16,7 @@
         <div>
             <form th:object="${orderSearch}" class="form-inline">
                 <div class="form-group mb-2">
-                    <input type="text" th:field="*{memberName}" class="formcontrol" placeholder="회원명"/>
+                    <input type="text" th:field="*{memberName}" class="form-control" placeholder="회원명"/>
                 </div>
                 <div class="form-group mx-sm-1 mb-2">
                     <select th:field="*{orderStatus}" class="form-control">
@@ -25,31 +31,48 @@
             </form>
         </div>
 
-        <table class="table table-striped">
+        <table class="table table-striped order-list">
             <thead>
             <tr>
                 <th>#</th>
                 <th>회원명</th>
-                <th>대표상품 이름</th>
-                <th>대표상품 주문가격</th>
-                <th>대표상품 주문수량</th>
-                <th>상태</th>
-                <th>일시</th>
+                <th>주문 상품명</th>
+                <th>주문 가격</th>
+                <th>주문 수량</th>
+                <th>주문 상태</th>
+                <th>주문 일시</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="order : ${orders}">
                 <td th:text="${order.id}"></td>
-                <td th:text="${order.member.name}"></td>
-                <td th:text="${order.orderItems[0].item.name}"></td>
-                <td th:text="${order.orderItems[0].orderPrice}"></td>
-                <td th:text="${order.orderItems[0].count}"></td>
-                <td th:text="${order.status}"></td>
-                <td th:text="${order.orderDate}"></td>
+                <td style="width: 15%" th:text="${order.member.name}"></td>
+                <td style="width: 20%">
+                    <th:block th:each="orderItem : ${order.orderItems}">
+                        [[ ${orderItem.item.name} ]]<br>
+                    </th:block>
+                </td>
                 <td>
+                    <th:block th:each="orderItem : ${order.orderItems}">
+                        [[ ${orderItem.orderPrice} ]]<br>
+                    </th:block>
+                </td>
+                <td style="width: 10%">
+                    <th:block th:each="orderItem : ${order.orderItems}">
+                        [[ ${orderItem.count} ]]<br>
+                    </th:block>
+                </td>
+                <td th:text="${order.status}"></td>
+                <td style="width: 20%" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <!--<td>
                     <a th:if="${order.status.name() == 'ORDER'}" href="#"
                        th:href="'javascript:cancel('+${order.id}+')'"
+                       class="btn btn-danger">CANCEL</a>
+                </td>-->
+                <td>
+                    <a th:if="${order.status.name() == 'ORDER'}" href="#"
+                       th:href="'javascript:confirm_cancel('+${order.id}+')'"
                        class="btn btn-danger">CANCEL</a>
                 </td>
             </tr>
@@ -62,6 +85,12 @@
 </div> <!-- /container -->
 </body>
 <script>
+    function confirm_cancel(id) {
+        var result = confirm("해당 주문을 취소하시겠습니까?");
+        if (result) {
+            cancel(id);
+        }
+    }
     function cancel(id) {
         var form = document.createElement("form");
         form.setAttribute("method", "post");
