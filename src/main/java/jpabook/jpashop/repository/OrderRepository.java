@@ -164,6 +164,7 @@ public class OrderRepository {
      * 주문(ORDER) + 배송정보(DELIVERY) + 회원(MEMBER)을 조회
      * * 엔티티를 페치 조인(fetch join)을 사용해서 쿼리 1번에 조회
      * * 페치 조인으로 order -> member , order -> delivery 는 이미 조회 된 상태 이므로 지연로딩 자체가 일어나지 X
+     * * 재사용성 증대
      */
     public List<Order> findAllWithMemberDelivery() { //ORDER를 가져올때 MEMBER, DELIVERY까지 객체 그래프를 한방에 가져오도록 쿼리
         return em.createQuery(
@@ -193,5 +194,18 @@ public class OrderRepository {
                 ) // Skips null arguments
                 .limit(1000)
                 .fetch();
+    }
+
+    /**
+     * JPA에서 DTO로 바로 조회
+     * 리포지토리 재사용성 떨어짐, API 스펙에 맞춘 코드가 리포지토리에 들어가는 단점. API 스펙이 바뀌면 당장 얘를 뜯어 고쳐야 한다.
+     */
+    public List<OrderSimpleQueryDto> findOrderDtos() {
+        return em.createQuery(
+                "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                        " from Order o" +
+                        " join o.member m" +
+                        " join o.delivery d", OrderSimpleQueryDto.class)
+                .getResultList();
     }
 }
