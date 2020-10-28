@@ -12,6 +12,10 @@ public class JpashopApplication {
 		SpringApplication.run(JpashopApplication.class, args);
 	}
 
+	/**
+	 * Hibernate5Module 기본 설정으로 사용하고 있음
+	 * 지연 로딩(Lazy loading)을 호출해서 정상적으로 프록시가 초기화 된(데이터가 로딩된) 것들만 API로 반환이 된다
+	 */
 	@Bean
 	Hibernate5Module hibernate5Module() {
 		Hibernate5Module hibernate5Module = new Hibernate5Module();
