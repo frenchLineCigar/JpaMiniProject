@@ -196,4 +196,25 @@ public class OrderRepository {
                 .fetch();
     }
 
+    /**
+     * 주문(ORDER) + 배송(DELIVERY) + 회원(MEMBER) + 주문 상품(ORDERITEM) + 상품(ITEM)을 조회
+     *
+     * 단점 : 페이징 불가능
+     * > 컬렉션 페치 조인을 사용하면 페이징이 불가능하다.
+     * > 일대다(1 : N)를 페치 조인(fetch join)하는 순간, 페이징 관련 쿼리는 아예 안 나간다.
+     * > 경고 로그를 남기며 모든 데이터를 DB에서 읽어오고, 메모리에서 페이징(매우 위험함)
+     * > WARN o.h.h.internal.ast.QueryTranslatorImpl   : HHH000104: firstResult/maxResults specified with `collection fetch`; applying in memory!
+     * > 컬렉션 페치 조인(일대다 페치 조인)은 1개만 사용할 수 있다. 컬렉션이 둘 이상에 페치 조인을 사용하면 안된다. 데이터가 부정합하게 조회될 수 있다.
+     */
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o" + //distinct -> 엔티티 식별자가 같은 경우에 중복을 걸러서 컬렉션에 담아준다.
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" + //one to MANY -> collection fetch join
+                        " join fetch oi.item i", Order.class)
+                //.setFirstResult(1) //첫번째 결과 row로 가져올 시작 위치, 0부터 시작 -> offset 쿼리 안나감
+                //.setMaxResults(100) //가져올 row 수 -> limit 쿼리 안나감
+                .getResultList();
+    }
 }
