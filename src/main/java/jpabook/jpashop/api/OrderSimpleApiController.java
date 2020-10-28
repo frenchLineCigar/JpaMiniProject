@@ -107,8 +107,9 @@ public class OrderSimpleApiController {
      * - select 절에서 원하는 데이터만 선택해서 조회
      */
     @GetMapping("/api/v4/simple-orders")
-    public List<OrderSimpleQueryDto> ordersV4() {
-        return orderSimpleQueryRepository.findOrderDtos();
+    public Result ordersV4() {
+        List<OrderSimpleQueryDto> orderDtos = orderSimpleQueryRepository.findOrderDtos();
+        return new Result(orderDtos);
     }
 
     @Data
