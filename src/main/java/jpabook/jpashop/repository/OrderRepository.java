@@ -196,16 +196,4 @@ public class OrderRepository {
                 .fetch();
     }
 
-    /**
-     * JPA에서 DTO로 바로 조회
-     * 리포지토리 재사용성 떨어짐, API 스펙에 맞춘 코드가 리포지토리에 들어가는 단점. API 스펙이 바뀌면 당장 얘를 뜯어 고쳐야 한다.
-     */
-    public List<OrderSimpleQueryDto> findOrderDtos() {
-        return em.createQuery(
-                "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
-                        " from Order o" +
-                        " join o.member m" +
-                        " join o.delivery d", OrderSimpleQueryDto.class)
-                .getResultList();
-    }
 }
