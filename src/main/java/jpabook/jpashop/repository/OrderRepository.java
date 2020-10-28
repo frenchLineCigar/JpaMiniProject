@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
+import jpabook.jpashop.domain.QDelivery;
 import jpabook.jpashop.domain.QMember;
 import jpabook.jpashop.domain.QOrder;
 import lombok.RequiredArgsConstructor;
@@ -159,5 +160,38 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    /**
+     * 주문(ORDER) + 배송정보(DELIVERY) + 회원(MEMBER)을 조회
+     * * 엔티티를 페치 조인(fetch join)을 사용해서 쿼리 1번에 조회
+     * * 페치 조인으로 order -> member , order -> delivery 는 이미 조회 된 상태 이므로 지연로딩 자체가 일어나지 X
+     */
+    public List<Order> findAllWithMemberDelivery() { //ORDER를 가져올때 MEMBER, DELIVERY까지 객체 그래프를 한방에 가져오도록 쿼리
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
+    /**
+     * findAllWithMemberDelivery()에 QueryDSL 적용
+     */
+    public List<Order> findAllWithMemberDeliveryByQueryDSL(OrderSearch orderSearch) { //ORDER를 가져올때 MEMBER, DELIVERY까지 객체 그래프를 한방에 가져오도록 쿼리
+        JPAQueryFactory query = new JPAQueryFactory(em);
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+        QDelivery delivery = QDelivery.delivery;
 
+        return query.select(order)
+                .from(order)
+                .join(order.member, member)
+                .fetchJoin() //이렇게 페치 조인
+                .join(order.delivery, delivery)
+                .fetchJoin()
+                .where(
+                        statusEq(orderSearch.getOrderStatus()),
+                        nameLike(orderSearch.getMemberName())
+                ) // Skips null arguments
+                .limit(1000)
+                .fetch();
+    }
 }

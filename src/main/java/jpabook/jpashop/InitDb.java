@@ -64,9 +64,9 @@ public class InitDb {
         }
 
         public void dbInit2() {
-//            Member member = createMember("userB", "진주", "바닷길", "2222");
-//            em.persist(member);
-            Member member = memberRepository.findByName("userA").get(0);
+            Member member = createMember("userB", "진주", "바닷길", "2222");
+            em.persist(member);
+//            Member member = memberRepository.findByName("userA").get(0);
 
             Book book1 = createBook("SPRING BOOK1", 20000, 200);
             em.persist(book1);

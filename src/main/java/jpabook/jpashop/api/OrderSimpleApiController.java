@@ -9,8 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +62,34 @@ public class OrderSimpleApiController {
         //ORDER 2개 (N = 2)
         //N + 1 문제 -> 1 + 회원 N + 배송 N
         List<Order> orders = orderRepository.findAll(new OrderSearch());
+
+        List<SimpleOrderDto> result = orders.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+
+        return new Result(result);
+    }
+
+    /**
+     * V3. 엔티티를 조회해서 DTO로 변환(fetch join 사용O)
+     * - fetch join으로 쿼리 1번 호출
+     */
+    @GetMapping("/api/v3/simple-orders")
+    public Result ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+
+        List<SimpleOrderDto> result = orders.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+
+        return new Result(result);
+    }
+    /**
+     * QueryDSL을 적용한 V3
+     */
+    @GetMapping("/api/v3/simple-orders-querydsl")
+    public Result ordersV3byQueryDSL(@RequestBody @Valid OrderSearch orderSearch) {
+        List<Order> orders = orderRepository.findAllWithMemberDeliveryByQueryDSL(orderSearch);
 
         List<SimpleOrderDto> result = orders.stream()
                 .map(SimpleOrderDto::new)
