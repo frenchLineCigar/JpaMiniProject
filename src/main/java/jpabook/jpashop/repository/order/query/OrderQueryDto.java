@@ -24,4 +24,5 @@ public class OrderQueryDto {
         this.orderStatus = orderStatus;
         this.address = address;
     }
+
 }

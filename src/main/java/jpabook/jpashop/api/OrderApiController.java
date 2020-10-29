@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * V2. 엔티티를 조회해서 DTO로 변환(fetch join 사용X)
  * V3. 엔티티를 조회해서 DTO로 변환(fetch join 사용O)
  * V4. JPA에서 DTO로 바로 조회, 컬렉션 N 조회 (1 + N Query)
+ * V5. JPA에서 DTO로 바로 조회, 컬렉션 1 조회 최적화 버전 (1 + 1 Query)
  *
  */
 @RestController
@@ -111,6 +112,16 @@ public class OrderApiController {
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
     }
+
+    /**
+     * V5. JPA에서 DTO로 바로 조회, 컬렉션 1 조회 최적화 버전 (1 + 1 Query)
+     * - 페이징 가능
+     */
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
+    }
+
 
     @Data
     @AllArgsConstructor
