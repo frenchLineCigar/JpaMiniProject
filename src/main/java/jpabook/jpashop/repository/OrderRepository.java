@@ -200,6 +200,7 @@ public class OrderRepository {
      * 주문(ORDER) + 배송(DELIVERY) + 회원(MEMBER) + 주문 상품(ORDERITEM) + 상품(ITEM)을 조회
      *
      * 단점 : 페이징 불가능
+     * > 쿼리는 한방에 나가지만, 데이터 전송량 자체가 많아진다. 조인 시 '다'에 맞춰서 '1'의 데이터가 뻥튀기
      * > 컬렉션 페치 조인을 사용하면 페이징이 불가능하다.
      * > 일대다(1 : N)를 페치 조인(fetch join)하는 순간, 페이징 관련 쿼리는 아예 안 나간다.
      * > 경고 로그를 남기며 모든 데이터를 DB에서 읽어오고, 메모리에서 페이징(매우 위험함)
@@ -213,8 +214,24 @@ public class OrderRepository {
                         " join fetch o.delivery d" +
                         " join fetch o.orderItems oi" + //one to MANY -> collection fetch join
                         " join fetch oi.item i", Order.class)
-                //.setFirstResult(1) //첫번째 결과 row로 가져올 시작 위치, 0부터 시작 -> offset 쿼리 안나감
-                //.setMaxResults(100) //가져올 row 수 -> limit 쿼리 안나감
+                .setFirstResult(1) //첫번째 결과 row로 가져올 시작 위치(0부터 시작) 설정해도 offset 쿼리 안나감
+                .setMaxResults(100) //가져올 row 수 설정해도 limit 쿼리 안나감, 뻥튀기 된 모든 결과row를 '일단은' 앱으로 끌고와서 메모리 상에서 염병 지지고 볶고를 함...
+                .getResultList();
+    }
+
+    /**
+     * 주문(ORDER) + 배송(DELIVERY) + 회원(MEMBER) + 주문 상품(ORDERITEM) + 상품(ITEM)을 조회
+     *
+     * N+1 문제와 페이징을 해결
+     * : 지연 로딩 성능 최적화를 위해 hibernate.default_batch_fetch_size , @BatchSize 를 적용
+     */
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 }
