@@ -10,6 +10,7 @@ import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +27,6 @@ import java.util.List;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-
 /**
  * 주문 ( + 배송 + 회원 + 주문 상품 ) 정보 조회 API
  *
@@ -58,9 +59,22 @@ public class OrderApiController {
             order.getDelivery().getAddress(); //Lazy 강제 초기화, Delivery
 
             List<OrderItem> orderItems = order.getOrderItems();
-            orderItems.stream().forEach(o -> o.getItem().getName()); //Lazy 강제 초기화, Item
+            orderItems.stream().forEach(oi -> oi.getItem().getName()); //Lazy 강제 초기화, Item
         }
         return all;
+    }
+
+    /**
+     * OSIV를 OFF한 경우 V1 리팩토링
+     * - OSIV를 끄면 모든 지연로딩을 트랜잭션 안에서 처리해야 한다
+     *  (영속성 컨텍스트의 생존 범위를 벗어난 `컨트롤러나 뷰에서 지연로딩이 불가함`)
+     * - 아니면 레파지토리 계층에서 fetch join을 사용해야 한다
+     */
+    private final OrderQueryService orderQueryService;
+
+    @GetMapping("/api/v1_fix/orders")
+    public List<Order> ordersV1_OSIV_DISABLED(@Valid OrderSearch orderSearch) {
+        return orderQueryService.ordersV1(orderSearch);
     }
 
     /**
@@ -74,6 +88,14 @@ public class OrderApiController {
                 .map(o -> new OrderDto(o))
                 .collect(toList());
         return new Result(result);
+    }
+
+    /**
+     * OSIV를 OFF한 경우 V2 리팩토링
+     */
+    @GetMapping("/api/v2_fix/orders")
+    public List<jpabook.jpashop.service.query.OrderDto> ordersV2_OSIV_DISABLED(@Valid OrderSearch orderSearch) {
+        return orderQueryService.ordersV2(orderSearch);
     }
 
     /**

@@ -11,6 +11,7 @@ spring:
     suffix: .html
 
   jpa:
+    open-in-view: false #OSIV OFF
     hibernate:
       ddl-auto: create
     properties:

@@ -214,7 +214,7 @@ public class OrderRepository {
                         " join fetch o.delivery d" +
                         " join fetch o.orderItems oi" + //one to MANY -> collection fetch join
                         " join fetch oi.item i", Order.class)
-                .setFirstResult(1) //첫번째 결과 row로 가져올 시작 위치(0부터 시작) 설정해도 offset 쿼리 안나감
+                .setFirstResult(0) //첫번째 결과 row로 가져올 시작 위치(0부터 시작) 설정해도 offset 쿼리 안나감
                 .setMaxResults(100) //가져올 row 수 설정해도 limit 쿼리 안나감, 뻥튀기 된 모든 결과row를 '일단은' 앱으로 끌고와서 메모리 상에서 염병 지지고 볶고를 함...
                 .getResultList();
     }
