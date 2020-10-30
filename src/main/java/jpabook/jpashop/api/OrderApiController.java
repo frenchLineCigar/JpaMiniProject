@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.AllArgsConstructor;
@@ -17,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 
 /**
  * 주문 ( + 배송 + 회원 + 주문 상품 ) 정보 조회 API
@@ -28,6 +34,7 @@ import java.util.stream.Collectors;
  * V3. 엔티티를 조회해서 DTO로 변환(fetch join 사용O)
  * V4. JPA에서 DTO로 바로 조회, 컬렉션 N 조회 (1 + N Query)
  * V5. JPA에서 DTO로 바로 조회, 컬렉션 1 조회 최적화 버전 (1 + 1 Query)
+ * V6. JPA에서 DTO로 바로 조회, 플랫 데이터(1Query) (1 Query)
  *
  */
 @RestController
@@ -65,7 +72,7 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAll(new OrderSearch());
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
-                .collect(Collectors.toList());
+                .collect(toList());
         return new Result(result);
     }
 
@@ -78,11 +85,10 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllWithItem();
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         return new Result(result);
     }
-
 
     /**
      * V3.1 엔티티를 조회해서 DTO로 변환 페이징 고려
@@ -99,7 +105,7 @@ public class OrderApiController {
 
         List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         return new Result(result);
     }
@@ -122,6 +128,29 @@ public class OrderApiController {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
+    /**
+     * V6. JPA에서 DTO로 바로 조회, 플랫 데이터(1Query) (1 Query)
+     * - 페이징 불가능...
+     */
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+        //API 스펙에 맞게 데이터 가공
+        List<OrderQueryDto> result
+                = flats.stream()
+                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        mapping(o1 -> new OrderItemQueryDto(o1.getOrderId(), o1.getItemName(), o1.getOrderPrice(), o1.getCount()), toList())))
+                .entrySet()
+                .stream()
+                .map(e -> new OrderQueryDto(
+                        e.getKey().getOrderId(), e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(),
+                        e.getValue()))
+                .sorted((Comparator.comparingLong(OrderQueryDto::hashCode))) //orderId 오름차순으로 요소 정렬
+                .collect(toList());
+
+        return result;
+    }
 
     @Data
     @AllArgsConstructor
@@ -147,7 +176,7 @@ public class OrderApiController {
             address = order.getDelivery().getAddress();
             orderItems = order.getOrderItems().stream()
                     .map(orderItem -> new OrderItemDto(orderItem))
-                    .collect(Collectors.toList());
+                    .collect(toList());
         }
 
     }
